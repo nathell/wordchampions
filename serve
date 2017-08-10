@@ -1,0 +1,21 @@
+#!/usr/bin/env python
+
+import BaseHTTPServer
+import SimpleHTTPServer
+import os.path
+server_address = ("", 8888)
+PATH1 = 'resources/'
+PATH2 = 'target/cljsbuild/public/'
+
+class MyRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+    def translate_path(self, path):
+        if path == '/':
+            new_path = PATH1 + 'index.html'
+        elif os.path.isfile(PATH1 + path):
+            new_path = PATH1 + path
+        else:
+            new_path = PATH2 + path
+        return SimpleHTTPServer.SimpleHTTPRequestHandler.translate_path(self, new_path)
+
+httpd = BaseHTTPServer.HTTPServer(server_address, MyRequestHandler)
+httpd.serve_forever()
