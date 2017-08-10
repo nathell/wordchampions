@@ -3,7 +3,7 @@
   :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
                  [re-frame "0.9.4"]
                  [org.clojure/clojurescript "1.9.854" :scope "provided"]
-                 [reagent "0.6.0"]]
+                 [reagent "0.6.0" :exclusions [cljsjs/react cljsjs/react-dom]]]
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-figwheel "0.5.12"]]
   :clean-targets ^{:protect false}
