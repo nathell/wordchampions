@@ -1,7 +1,6 @@
-# kobrem
+# gridlock
 
-A bare minimal starting point for ClojureScript projects based on
-re-frame. Doesn’t assume a Clojure backend.
+A fun word game!
 
 ## Building it
 
