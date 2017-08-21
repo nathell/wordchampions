@@ -1,9 +1,9 @@
-(ns kobrem.core
+(ns gridlock.core
   (:require [reagent.core :as r]
             [re-frame.core :refer [reg-event-db reg-event-fx reg-sub dispatch dispatch-sync subscribe]]
-            [kobrem.mui :as mui]
+            [gridlock.mui :as mui]
             [clojure.string :as string]
-            [kobrem.problems :as problems]))
+            [gridlock.problems :as problems]))
 
 (enable-console-print!)
 

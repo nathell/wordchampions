@@ -1,4 +1,4 @@
-(ns kobrem.mui
+(ns gridlock.mui
   (:require [reagent.core :refer [adapt-react-class as-element]]))
 
 (def app-bar (adapt-react-class js/MUI.AppBar))
