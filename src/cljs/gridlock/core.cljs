@@ -1,6 +1,8 @@
 (ns gridlock.core
   (:require [reagent.core :as r]
             [re-frame.core :refer [reg-event-db reg-event-fx reg-sub dispatch dispatch-sync subscribe]]
+            [react-dnd :as dnd]
+            [react-dnd-html5-backend :as dnd-html5]
             [gridlock.mui :as mui]
             [clojure.string :as string]
             [gridlock.problems :as problems]))
@@ -184,9 +186,9 @@
 
 (def size 45)
 
-(def html-context (js/ReactDnD.DragDropContext js/ReactDnDHTML5Backend))
-(def drag-source js/ReactDnD.DragSource)
-(def drop-target js/ReactDnD.DropTarget)
+(def html-context (dnd/DragDropContext dnd-html5))
+(def drag-source dnd/DragSource)
+(def drop-target dnd/DropTarget)
 
 (defn decorate [decorator]
   (fn [component]
