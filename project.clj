@@ -23,5 +23,5 @@
              :uberjar {:cljsbuild {:jar true
                                    :builds {:app
                                             {:compiler
-                                             {:optimizations :advanced
+                                             {:optimizations :whitespace
                                               :pretty-print false}}}}}})
