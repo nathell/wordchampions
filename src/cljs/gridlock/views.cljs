@@ -13,7 +13,8 @@
   (if movable?
     (r/with-let [hide? (r/atom nil)]
       [:div.tile {:draggable true
-                  :on-drag-start #(do (dispatch [:start-drag source])
+                  :on-drag-start #(do (-> % (aget "dataTransfer") (.setData "text/plain" c))
+                                      (dispatch [:start-drag source])
                                       (reset! hide? true))
                   :on-drag-end #(do (dispatch [:end-drag])
                                     (reset! hide? false))
