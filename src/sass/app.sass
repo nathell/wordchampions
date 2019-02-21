@@ -1,0 +1,196 @@
+// https://www.colourlovers.com/palette/44749/Valiant
+
+$purple: #7F4B61
+$greenish: #A5AC82
+$pale: #F5EBB0
+$green: #ACB852
+$maroon: #4C4028
+$white: lighten($pale, 10)
+$pale-green: lighten($green, 20)
+$paler-green: lighten($green, 30)
+$pale-greenish: lighten($greenish, 20)
+
+
+html, body
+  margin: 0
+  font-family: Helvetica, Arial, sans-serif
+
+html
+  height: 100%
+
+body, #app, .root
+  height: 100%
+  color: $maroon
+
+a
+  color: $purple
+
+.root
+  display: flex
+  flex-direction: column
+
+.title-bar
+  flex: 0 0 48px
+  background-color: $purple
+  color: $white
+  padding-left: 24px
+  font-size: 24px
+  line-height: 48px
+
+.main-panel
+  flex: 1
+  display: flex
+  justify-content: center
+  align-items: center
+  background-color: $pale
+
+.panel
+  display: flex
+  flex-direction: column
+  text-align: center
+
+.game
+  user-select: none
+  -moz-user-select: none
+
+.button
+  display: inline-block
+  margin: 0 6px
+  text-decoration: none
+  background-color: $purple
+  color: $white
+  height: 48px
+  font-size: 20px
+  line-height: 48px
+  width: 150px
+  border: none
+  border-radius: 4px
+  box-shadow: none
+  -webkit-appearance: none
+  &:focus
+    outline: none
+  &:hover
+    background-color: lighten($purple, 10)
+    cursor: pointer
+
+.welcome
+  text-align: center
+  .title
+    font-size: 72px
+    line-height: 1.5
+
+$tile-size: 48px
+$border-size: 1px
+$grid-item-padding: 3px
+$grid-item-size: $tile-size + ($grid-item-padding) * 2
+$letter-size: 3/4 * $tile-size
+
+.diagram
+  display: inline-grid
+  padding: 8px
+  grid-template-columns: repeat(5, $grid-item-size)
+  grid-template-rows: repeat(5, $grid-item-size)
+  grid-gap: $border-size
+  box-sizing: border-box
+
+.diagram-finished
+  .diagram-item
+    text-stroke: 1px white
+    text-shadow: 0 0 10px white
+    background: $pale-green
+  .tile
+    cursor: default
+    background: none
+    border: none
+
+.diagram-item
+  cursor: default
+  background: $white
+  line-height: $tile-size
+  box-shadow: 0 0 0 $border-size $maroon
+
+.diagram-highlighted .diagram-item
+  background: $paler-green
+
+@mixin highlighted
+  background: $greenish !important
+  transition: background 200ms
+
+.diagram-item-highlighted
+  @include highlighted
+
+.diagram-item-corner
+  visibility: hidden
+
+.diagram-item-border
+  font-weight: 700
+  font-size: $letter-size
+  line-height: $grid-item-size
+  text-transform: uppercase
+
+.tile
+  cursor: pointer
+  display: inline-block
+  width: $tile-size
+  height: $tile-size
+  box-sizing: border-box
+  background: $pale-greenish
+  border: 1px solid $greenish
+  border-radius: 6px
+  margin-top: $grid-item-padding
+  text-align: center
+  font-weight: 700
+  line-height: $tile-size
+  font-size: $letter-size
+  text-transform: uppercase
+
+.tile-hidden
+  transform: translateX(-9999px)
+
+.diagrams-area
+  margin-bottom: 10px
+
+.nines-area
+  margin: 0 auto
+  padding: 12px 18px
+  width: 9 * $tile-size + 12px
+  display: inline-block
+  background: $white
+  border: 1px solid black
+
+.nines-area-highlighted
+  @include highlighted
+
+.nine
+  padding: 5px 5px
+  height: $tile-size + 5px
+  margin-bottom: 10px
+  text-align: left
+
+.author
+  position: absolute
+  bottom: 6px
+  left: 12px
+
+.difficulty
+  h2
+    margin: 0
+
+.success
+  h1
+    display: block
+    margin: 0
+    font-size: 200px
+    text-shadow: 0 0 30px $maroon
+    animation: tilt 2s ease infinite 0s
+
+.buttons
+  margin-top: 18px
+  text-align: center
+
+@keyframes tilt
+  0%   { transform: rotate(20deg); }
+  25%  { transform: rotate(0); }
+  50%  { transform: rotate(-20deg); }
+  75%  { transform: rotate(0); }
+  100% { transform: rotate(20deg); }
