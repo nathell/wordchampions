@@ -66,4 +66,4 @@
   (fn [db _]
     (if (contains? #{:in-progress :success} (:mode db))
       (str "Czas: " (format-time (:time db)) " Podpowiedzi: " (:hints db))
-      "I Ty możesz zostać Kobremem!")))
+      "Władcy słów")))
