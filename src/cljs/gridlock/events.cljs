@@ -110,6 +110,19 @@
           (insert-to-nines target-nine letter)
           (remove-compat-if-needed source-diagram target-nine)))))
 
+(defn clean-diagram [db diagram-number]
+  (if-let [nine-number (get-in db [:compat diagram-number])]
+    (-> db
+        (update-in [:words nine-number] #(assoc % :available (:full %)))
+        (assoc-in [:zag diagram-number :fill] ".........")
+        (update :compat dissoc diagram-number))
+    db))
+
+(reg-event-db
+  :clean-diagram
+  (fn [db [_ diagram-number]]
+    (clean-diagram db diagram-number)))
+
 (reg-event-db
   :drop-nines
   (fn [db _]

@@ -6,6 +6,7 @@ $pale: #F5EBB0
 $green: #ACB852
 $maroon: #4C4028
 $white: lighten($pale, 10)
+$grey: lighten($maroon, 40)
 $pale-green: lighten($green, 20)
 $paler-green: lighten($green, 30)
 $pale-greenish: lighten($greenish, 20)
@@ -121,6 +122,20 @@ $letter-size: 3/4 * $tile-size
 
 .diagram-item-corner
   visibility: hidden
+
+.reload
+  display: flex
+  justify-content: center
+  align-items: center
+  cursor: pointer
+  svg
+    display: block
+    width: $letter-size
+    height: $letter-size
+    stroke: $grey
+  &:hover
+    svg
+      stroke: $maroon
 
 .diagram-item-border
   font-weight: 700

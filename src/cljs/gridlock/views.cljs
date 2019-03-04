@@ -43,19 +43,23 @@
                   placable? (= letter ".")
                   droppable? (and placable? (<sub [:can-place? diagram-number]))]]
         ^{:key (str x "-" y)}
-        [:div.diagram-item
-         (cond->
-             {:class (cond corner? "diagram-item-corner"
-                           border  "diagram-item-border")}
-           (and in-area? (@highlighted-fields letter-pos)) (r/merge-props {:class "diagram-item-highlighted"})
-           droppable? (assoc :on-drag-enter #(swap! highlighted-fields conj letter-pos)
-                             :on-drag-leave #(swap! highlighted-fields disj letter-pos)
-                             :on-drag-over #(do (.preventDefault %) (.stopPropagation %))
-                             :on-drop #(do (.preventDefault %) (swap! highlighted-fields empty) (dispatch [:drop-diagram {:diagram-number diagram-number, :letter-pos letter-pos}]))))
-         (cond corner? nil
-               border  (get-in desc [border border-pos])
-               :else   (when (and letter (not placable?))
-                         [tile {:diagram-number diagram-number, :letter-pos letter-pos} letter (not finished)]))])))])
+        (if (and (= x 4) (= y 0) (not finished))
+          [:div.reload
+           [:svg {:on-click #(dispatch [:clean-diagram diagram-number])}
+            [:use {:xlink-href "#rotate-ccw"}]]]
+          [:div.diagram-item
+           (cond->
+               {:class (cond corner? "diagram-item-corner"
+                             border  "diagram-item-border")}
+             (and in-area? (@highlighted-fields letter-pos)) (r/merge-props {:class "diagram-item-highlighted"})
+             droppable? (assoc :on-drag-enter #(swap! highlighted-fields conj letter-pos)
+                               :on-drag-leave #(swap! highlighted-fields disj letter-pos)
+                               :on-drag-over #(do (.preventDefault %) (.stopPropagation %))
+                               :on-drop #(do (.preventDefault %) (swap! highlighted-fields empty) (dispatch [:drop-diagram {:diagram-number diagram-number, :letter-pos letter-pos}]))))
+           (cond corner? nil
+                 border  (get-in desc [border border-pos])
+                 :else   (when (and letter (not placable?))
+                           [tile {:diagram-number diagram-number, :letter-pos letter-pos} letter (not finished)]))]))))])
 
 (defn nine [{:keys [nine-number letters]}]
   (into
