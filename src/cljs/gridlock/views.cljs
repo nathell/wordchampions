@@ -130,7 +130,11 @@
       :on-click #(dispatch [:set-dictionary :osps])}
      [:h3 "Oficjalny Słownik Polskiego Scrabblisty"]
      [:p "(trudne słowa, bez nazw własnych)"]
-     [:p "2 000 zagadek"]]]
+     [:p "2 000 zagadek"]
+     [:p [:small "Udostępniony dzięki uprzejmości "
+          [:a {:href "http://pfs.org.pl"
+               :target "_blank"
+               :rel "noopener"} "Polskiej Federacji Scrabble"]]]]]
    [:h2 "Wybierz poziom trudności:"]
    [:div.buttons
     [:button.button {:on-click #(dispatch [:start 1])} "Łatwy"]
