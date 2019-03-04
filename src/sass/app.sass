@@ -19,7 +19,7 @@ html, body
 html
   height: 100%
 
-body, #app, .root
+body, #app
   height: 100%
   color: $maroon
 
@@ -27,6 +27,8 @@ a
   color: $purple
 
 .root
+  min-height: 100%
+  position: relative
   display: flex
   flex-direction: column
 
@@ -44,6 +46,7 @@ a
   justify-content: center
   align-items: center
   background-color: $pale
+  padding: 24px 0
 
 .panel
   display: flex
@@ -80,7 +83,7 @@ a
     font-size: 72px
     line-height: 1.5
 
-$tile-size: 48px
+$tile-size: 40px
 $border-size: 1px
 $grid-item-padding: 3px
 $grid-item-size: $tile-size + ($grid-item-padding) * 2
@@ -184,8 +187,8 @@ $letter-size: 3/4 * $tile-size
 
 .author
   position: absolute
-  bottom: 6px
-  left: 12px
+  bottom: 0px
+  left: 6px
 
 .difficulty
   h2
@@ -212,7 +215,7 @@ $letter-size: 3/4 * $tile-size
   h1
     display: block
     margin: 0
-    font-size: 200px
+    font-size: 150px
     text-shadow: 0 0 30px $maroon
     animation: tilt 2s ease infinite 0s
 
