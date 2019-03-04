@@ -72,10 +72,10 @@
     db))
 
 (defn remove-compat-if-needed
-  [db target-nine]
+  [db source-diagram target-nine]
   (let [{:keys [full available]} (get-in db [:words target-nine])]
     (if (= full available)
-      (update db :compat dissoc (get-in db [:dragging :diagram-number]))
+      (update db :compat dissoc source-diagram)
       db)))
 
 (defn check-success [db]
@@ -108,7 +108,7 @@
       (-> db
           (remove-from source)
           (insert-to-nines target-nine letter)
-          (remove-compat-if-needed target-nine)))))
+          (remove-compat-if-needed source-diagram target-nine)))))
 
 (reg-event-db
   :drop-nines
@@ -137,7 +137,9 @@
               fill (:fill problem)]
         letter-pos (range 9)
         :when (and (not= (nth fill letter-pos) ".")
-                   (not= (nth fill letter-pos) (nth expected letter-pos)))]
+                   (or (not= (nth fill letter-pos) (nth expected letter-pos))
+                       (when-let [word-number (get-in db [:compat diagram-number])]
+                         (not= diagram-number (get-in db [:words word-number :diagram-number])))))]
     {:diagram-number diagram-number, :letter-pos letter-pos}))
 
 (defn apply-hint
