@@ -1,5 +1,8 @@
 (ns gridlock.events
   (:require
+    [ajax.core :as ajax]
+    [clojure.string :as string]
+    [day8.re-frame.http-fx]
     [gridlock.db :as db]
     [re-frame.core :refer [reg-event-db reg-event-fx]]))
 
@@ -12,6 +15,20 @@
   :end-drag
   (fn [db _]
     (assoc db :dragging nil)))
+
+(reg-event-fx
+  :fetch-dictionary
+  (fn [_ [_ dict]]
+    {:http-xhrio {:method :get
+                  :uri (str "puzzles/" (name dict) ".txt")
+                  :timeout 10000
+                  :response-format (ajax/text-response-format)
+                  :on-success [:fetch-dictionary-success dict]}}))
+
+(reg-event-db
+  :fetch-dictionary-success
+  (fn [db [_ dict-name dict]]
+    (assoc-in db [:dictionaries dict-name] (string/split dict #"\n"))))
 
 (defn letter-at
   [db {:keys [diagram-number nine-number letter-pos]}]
@@ -137,10 +154,14 @@
         apply-hint
         (update :hints inc))))
 
-(reg-event-db
+(reg-event-fx
   :init
   (fn [_ _]
-    {:mode :before-start :time 0}))
+    {:db {:mode :before-start
+          :time 0
+          :dictionary :nkjp}
+     :dispatch-n [[:fetch-dictionary :osps]
+                  [:fetch-dictionary :nkjp]]}))
 
 (reg-event-db
   :select-difficulty
@@ -150,7 +171,7 @@
 (reg-event-fx
   :start
   (fn [{db :db} [_ n]]
-    (let [prs (db/problems n)]
+    (let [prs (db/problems db (:dictionary db) n)]
       (merge (when-not (= (:mode db) :in-progress)
                {:dispatch [:tick]})
              {:db (merge db prs
@@ -179,3 +200,8 @@
   :restart
   (fn [db _]
     (assoc db :mode :before-start)))
+
+(reg-event-db
+  :set-dictionary
+  (fn [db [_ dict]]
+    (assoc db :dictionary dict)))

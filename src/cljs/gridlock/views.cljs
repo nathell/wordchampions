@@ -113,7 +113,21 @@
 
 (defn difficulty []
   [:div.panel.difficulty
-   [:h2 "Wybierz poziom trudności"]
+   [:h2 "Wybierz słownik:"]
+   [:div.dictionaries
+    [:div.dictionary
+     {:class (when (<sub [:dictionary-selected? :nkjp]) "selected")
+      :on-click #(dispatch [:set-dictionary :nkjp])}
+     [:h3 "Częste słowa"]
+     [:p "(w tym imiona i inne nazwy własne)"]
+     [:p "279 zagadek"]]
+    [:div.dictionary
+     {:class (when (<sub [:dictionary-selected? :osps]) "selected")
+      :on-click #(dispatch [:set-dictionary :osps])}
+     [:h3 "Oficjalny Słownik Polskiego Scrabblisty"]
+     [:p "(trudne słowa, bez nazw własnych)"]
+     [:p "2 000 zagadek"]]]
+   [:h2 "Wybierz poziom trudności:"]
    [:div.buttons
     [:button.button {:on-click #(dispatch [:start 1])} "Łatwy"]
     [:button.button {:on-click #(dispatch [:start 3])} "Średni"]
@@ -122,12 +136,14 @@
 (defn root []
   [:div.root
    [:div.title-bar (<sub [:title-bar])]
-   [:div.main-panel
-    (condp = (<sub [:mode])
-      :before-start [welcome]
-      :difficulty [difficulty]
-      :success [success]
-      [game])]
+   (if-not (<sub [:loaded?])
+     [:div.main-panel "Ładuję słowniki..."]
+     [:div.main-panel
+      (condp = (<sub [:mode])
+        :before-start [welcome]
+        :difficulty [difficulty]
+        :success [success]
+        [game])])
    [:div.author "© "
     [:a {:target "_blank", :rel "noopener", :href "http://danieljanus.pl"} "Daniel Janus"]
     " 2017–2019 | Napisane w języku ClojureScript | "

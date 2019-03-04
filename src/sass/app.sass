@@ -176,6 +176,23 @@ $letter-size: 3/4 * $tile-size
   h2
     margin: 0
 
+.dictionaries
+
+.dictionary
+  vertical-align: middle
+  display: inline-block
+  border: 1px solid $purple
+  border-radius: 18px
+  width: 200px
+  height: 200px
+  padding: 18px
+  margin: 18px
+  transition: background-color 0.2s
+  cursor: pointer
+  &.selected, &:hover
+    background-color: $purple
+    color: $white
+
 .success
   h1
     display: block

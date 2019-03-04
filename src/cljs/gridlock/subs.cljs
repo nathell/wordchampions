@@ -67,3 +67,13 @@
     (if (contains? #{:in-progress :success} (:mode db))
       (str "Czas: " (format-time (:time db)) " Podpowiedzi: " (:hints db))
       "Władcy słów")))
+
+(reg-sub
+  :dictionary-selected?
+  (fn [db [_ dict]]
+    (= (:dictionary db) dict)))
+
+(reg-sub
+  :loaded?
+  (fn [{:keys [dictionaries]} _]
+    (and (:nkjp dictionaries) (:osps dictionaries) true)))

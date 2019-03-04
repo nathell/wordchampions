@@ -1,6 +1,6 @@
 (ns gridlock.db
   (:require
-    [gridlock.problems :as problems]))
+    [clojure.string :as string]))
 
 (defn substitute-letter [w i c]
   (str (subs w 0 i) c (subs w (inc i) (count w))))
@@ -11,12 +11,34 @@
    :vert (mapv rand-nth vert),
    :fill "........."})
 
+(defn parse-problem
+  [problem]
+  (when problem
+    (let [parts (string/split problem #",")
+          [middles word h1 h2 h3 v1 v2 v3] (map #(rand-nth (string/split % #";")) parts)
+          middles (partition 3 middles)
+          horiz-middles (map #(apply str %) middles)
+          vert-middles (apply map str middles)
+          horiz (mapv #(str (first %2) %1 (last %2)) horiz-middles [h1 h2 h3])
+          vert (mapv #(str (first %2) %1 (last %2)) vert-middles [v1 v2 v3])]
+      {:word word
+       :horiz horiz
+       :vert vert
+       :fill "........."})))
+
+(defn generate-problem
+  [db dict]
+  (-> db
+      (get-in [:dictionaries dict])
+      rand-nth
+      parse-problem))
+
 (defn problems
-  [n]
-  (let [res (map convert-problem (take n (shuffle problems/problems)))
+  [db dict n]
+  (let [items (repeatedly n #(generate-problem db dict))
         words (map-indexed (fn [i x] {:diagram-number i, :full (:word x), :available (:word x)})
-                           res)]
-    {:zag (mapv #(dissoc % :word) res)
+                           items)]
+    {:zag (mapv #(dissoc % :word) items)
      :words (vec (shuffle words))}))
 
 (defn expected-letters
