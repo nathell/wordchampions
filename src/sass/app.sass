@@ -1,5 +1,15 @@
 // https://www.colourlovers.com/palette/44749/Valiant
 
+$desktop: 960px
+
+=mobile
+  @media screen and (max-width: $desktop - 1px)
+    @content
+
+=desktop
+  @media screen and (min-width: $desktop)
+    @content
+
 $purple: #7F4B61
 $greenish: #A5AC82
 $pale: #F5EBB0
@@ -10,7 +20,6 @@ $grey: lighten($maroon, 40)
 $pale-green: lighten($green, 20)
 $paler-green: lighten($green, 30)
 $pale-greenish: lighten($greenish, 20)
-
 
 html, body
   margin: 0
@@ -26,6 +35,16 @@ body, #app
 a
   color: $purple
 
+h3
+  font-size: 20px
+  line-height: 1.25
+
+h3, p
+  margin: 0
+
+h3:not(:last-child), p:not(:last-child)
+  margin-bottom: 12px
+
 .root
   min-height: 100%
   position: relative
@@ -36,9 +55,15 @@ a
   flex: 0 0 48px
   background-color: $purple
   color: $white
-  padding-left: 24px
-  font-size: 24px
-  line-height: 48px
+  +desktop
+    padding-left: 24px
+    font-size: 24px
+    line-height: 48px
+  +mobile
+    flex: 0 0 30px
+    padding-left: 12px
+    font-size: 18px
+    line-height: 30px
 
 .main-panel
   flex: 1
@@ -84,16 +109,22 @@ a
     line-height: 1.5
 
 $tile-size: 40px
+$mobile-tile-size: 32px
 $border-size: 1px
 $grid-item-padding: 3px
 $grid-item-size: $tile-size + ($grid-item-padding) * 2
 $letter-size: 3/4 * $tile-size
+$mobile-grid-item-size: $mobile-tile-size + ($grid-item-padding) * 2
+$mobile-letter-size: 3/4 * $mobile-tile-size
 
 .diagram
   display: inline-grid
   padding: 8px
   grid-template-columns: repeat(5, $grid-item-size)
   grid-template-rows: repeat(5, $grid-item-size)
+  +mobile
+    grid-template-columns: repeat(5, $mobile-grid-item-size)
+    grid-template-rows: repeat(5, $mobile-grid-item-size)
   grid-gap: $border-size
   box-sizing: border-box
 
@@ -135,6 +166,9 @@ $letter-size: 3/4 * $tile-size
     display: block
     width: $letter-size
     height: $letter-size
+    +mobile
+      width: $mobile-letter-size
+      height: $mobile-letter-size
     stroke: $grey
   &:hover
     svg
@@ -144,6 +178,9 @@ $letter-size: 3/4 * $tile-size
   font-weight: 700
   font-size: $letter-size
   line-height: $grid-item-size
+  +mobile
+    font-size: $mobile-letter-size
+    line-height: $mobile-grid-item-size
   text-transform: uppercase
 
 .tile
@@ -151,6 +188,13 @@ $letter-size: 3/4 * $tile-size
   display: inline-block
   width: $tile-size
   height: $tile-size
+  line-height: $tile-size
+  font-size: $letter-size
+  +mobile
+    width: $mobile-tile-size
+    height: $mobile-tile-size
+    line-height: $mobile-tile-size
+    font-size: $mobile-letter-size
   box-sizing: border-box
   background: $pale-greenish
   border: 1px solid $greenish
@@ -158,8 +202,6 @@ $letter-size: 3/4 * $tile-size
   margin-top: $grid-item-padding
   text-align: center
   font-weight: 700
-  line-height: $tile-size
-  font-size: $letter-size
   text-transform: uppercase
 
 .tile-hidden
@@ -170,11 +212,17 @@ $letter-size: 3/4 * $tile-size
 
 .nines-area
   margin: 0 auto
-  padding: 12px 18px
+  padding: 12px
   width: 9 * $tile-size + 12px
+  +mobile
+    width: 9 * $mobile-tile-size + 12px
   display: inline-block
   background: $white
   border: 1px solid black
+  .nine
+    margin-bottom: 0
+    .tile
+      margin: 0
 
 .nines-area-highlighted
   @include highlighted
@@ -191,6 +239,8 @@ $letter-size: 3/4 * $tile-size
   left: 6px
 
 .difficulty
+  +mobile
+    padding-bottom: 24px
   h2
     margin: 0
 
@@ -201,10 +251,15 @@ $letter-size: 3/4 * $tile-size
   display: inline-block
   border: 1px solid $purple
   border-radius: 18px
-  width: 200px
-  height: 200px
+  width: 80%
+  +desktop
+    width: 200px
+    height: 200px
   padding: 18px
   margin: 18px
+  +mobile
+    padding: 12px
+    margin: 12px
   transition: background-color 0.2s
   cursor: pointer
   &.selected, &:hover
@@ -224,6 +279,11 @@ $letter-size: 3/4 * $tile-size
 .buttons
   margin-top: 18px
   text-align: center
+  +mobile
+    .button
+      display: inline-block
+      &:not(:last-child)
+        margin-bottom: 12px
 
 @keyframes tilt
   0%   { transform: rotate(20deg); }
