@@ -28,10 +28,19 @@
         (= y 0) [:top    (dec x)]
         (= y 4) [:bottom (dec x)]))
 
+(defn merge-props
+  ([m] m)
+  ([m1 m2] (r/merge-props m1 m2))
+  ([m1 m2 & ms] (r/merge-props m1 (apply merge-props m2 ms))))
+
 (defn diagram
   [{:keys [diagram-number placed finished highlighted] :as desc}]
-  [:div.diagram (r/merge-props (when finished {:class "diagram-finished"})
-                               (when highlighted {:class "diagram-highlighted"}))
+  [:div.diagram (merge-props (when finished {:class "diagram-finished"})
+                             (when highlighted {:class "diagram-highlighted"})
+                             (if (= diagram-number (<sub [:current-diagram]))
+                               {:class "diagram-current"}
+                               {:class "diagram-small"})
+                             {:on-click #(dispatch [:set-current-diagram diagram-number])})
    (r/with-let [highlighted-fields (r/atom #{})]
      (doall
       (for [y (range 5) x (range 5)
@@ -42,11 +51,12 @@
                   letter (when in-area? (nth placed letter-pos))
                   placable? (= letter ".")
                   droppable? (and placable? (<sub [:can-place? diagram-number]))]]
-        ^{:key (str x "-" y)}
         (if (and (= x 4) (= y 0) (not finished))
+          ^{:key (str x "-" y)}
           [:div.reload
            [:svg {:on-click #(dispatch [:clean-diagram diagram-number])}
             [:use {:xlink-href "#rotate-ccw"}]]]
+          ^{:key (str x "-" y)}
           [:div.diagram-item
            (cond->
                {:class (cond corner? "diagram-item-corner"
@@ -154,10 +164,7 @@
         [game])])
    [:div.author "© "
     [:a {:target "_blank", :rel "noopener", :href "http://danieljanus.pl"} "Daniel Janus"]
-    " 2017–2019 | Napisane w języku ClojureScript | "
-    [:a {:target "_blank", :rel "noopener", :href "https://github.com/nathell/gridlock"} "Kod źródłowy"]
-    ]
-   ])
-      ;; :before-start [welcome]
-      ;; :success [success]
-      ;; [game])])]])
+    " 2017–2019"
+    [:span.is-hidden-mobile
+     " | Napisane w języku ClojureScript | "
+     [:a {:target "_blank", :rel "noopener", :href "https://github.com/nathell/gridlock"} "Kod źródłowy"]]]])

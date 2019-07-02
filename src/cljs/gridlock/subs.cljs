@@ -52,6 +52,11 @@
   (fn [db _]
     (:mode db)))
 
+(reg-sub
+  :current-diagram
+  (fn [db _]
+    (:current-diagram db)))
+
 (defn leading-zero
   [s]
   (if (< s 10)

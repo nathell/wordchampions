@@ -45,6 +45,10 @@ h3, p
 h3:not(:last-child), p:not(:last-child)
   margin-bottom: 12px
 
+.is-hidden-mobile
+  +mobile
+    display: none
+
 .root
   min-height: 100%
   position: relative
@@ -72,6 +76,8 @@ h3:not(:last-child), p:not(:last-child)
   align-items: center
   background-color: $pale
   padding: 24px 0
+  +mobile
+    padding: 12px 0
 
 .panel
   display: flex
@@ -88,10 +94,16 @@ h3:not(:last-child), p:not(:last-child)
   text-decoration: none
   background-color: $purple
   color: $white
-  height: 48px
-  font-size: 20px
-  line-height: 48px
-  width: 150px
+  +desktop
+    height: 48px
+    font-size: 20px
+    line-height: 48px
+    width: 150px
+  +mobile
+    height: 32px
+    font-size: 16px
+    line-height: 32px
+    width: 120px
   border: none
   border-radius: 4px
   box-shadow: none
@@ -109,13 +121,16 @@ h3:not(:last-child), p:not(:last-child)
     line-height: 1.5
 
 $tile-size: 40px
-$mobile-tile-size: 32px
+$mobile-tile-size: 24px
 $border-size: 1px
 $grid-item-padding: 3px
 $grid-item-size: $tile-size + ($grid-item-padding) * 2
 $letter-size: 3/4 * $tile-size
 $mobile-grid-item-size: $mobile-tile-size + ($grid-item-padding) * 2
 $mobile-letter-size: 3/4 * $mobile-tile-size
+$mobile-small-tile-size: 9px
+$mobile-small-grid-item-size: 12px
+$mobile-small-letter-size: 9px
 
 .diagram
   display: inline-grid
@@ -127,6 +142,11 @@ $mobile-letter-size: 3/4 * $mobile-tile-size
     grid-template-rows: repeat(5, $mobile-grid-item-size)
   grid-gap: $border-size
   box-sizing: border-box
+
+.diagram-small
+  +mobile
+    grid-template-columns: repeat(5, $mobile-small-grid-item-size)
+    grid-template-rows: repeat(5, $mobile-small-grid-item-size)
 
 .diagram-finished
   .diagram-item
@@ -141,7 +161,9 @@ $mobile-letter-size: 3/4 * $mobile-tile-size
 .diagram-item
   cursor: default
   background: $white
-  line-height: $tile-size
+  display: flex
+  justify-content: center
+  align-items: center
   box-shadow: 0 0 0 $border-size $maroon
 
 .diagram-highlighted .diagram-item
@@ -177,11 +199,13 @@ $mobile-letter-size: 3/4 * $mobile-tile-size
 .diagram-item-border
   font-weight: 700
   font-size: $letter-size
-  line-height: $grid-item-size
   +mobile
     font-size: $mobile-letter-size
-    line-height: $mobile-grid-item-size
-  text-transform: uppercase
+    text-transform: uppercase
+
+.diagram-small .diagram-item-border
+  +mobile
+    font-size: $mobile-small-letter-size
 
 .tile
   cursor: pointer
@@ -199,28 +223,54 @@ $mobile-letter-size: 3/4 * $mobile-tile-size
   background: $pale-greenish
   border: 1px solid $greenish
   border-radius: 6px
-  margin-top: $grid-item-padding
   text-align: center
   font-weight: 700
   text-transform: uppercase
+
+.diagram-small .tile
+  +mobile
+    width: $mobile-small-tile-size
+    height: $mobile-small-tile-size
+    line-height: $mobile-small-tile-size
+    font-size: $mobile-small-letter-size
+    border-radius: 1px
+
+.diagram-small .reload
+  +mobile
+    visibility: hidden
 
 .tile-hidden
   transform: translateX(-9999px)
 
 .diagrams-area
   margin-bottom: 10px
+  display: flex
+  flex-wrap: wrap
+  justify-content: center
+
+.diagram-current
+  order: 5
 
 .nines-area
   margin: 0 auto
   padding: 12px
   width: 9 * $tile-size + 12px
   +mobile
-    width: 9 * $mobile-tile-size + 12px
+    width: 100%
   display: inline-block
   background: $white
   border: 1px solid black
+  +mobile
+    border-left: none
+    border-right: none
+    padding: 6px 0
   .nine
+    display: flex
+    align-items: center
     margin-bottom: 0
+    +mobile
+      width: 9 * $mobile-tile-size
+      margin: 0 auto
     .tile
       margin: 0
 
@@ -230,6 +280,9 @@ $mobile-letter-size: 3/4 * $mobile-tile-size
 .nine
   padding: 5px 5px
   height: $tile-size + 5px
+  +mobile
+    padding: 2px 2px
+    height: $mobile-tile-size + 2px
   margin-bottom: 10px
   text-align: left
 
@@ -273,6 +326,8 @@ $mobile-letter-size: 3/4 * $mobile-tile-size
     display: block
     margin: 0
     font-size: 150px
+    +mobile
+      font-size: 80px
     text-shadow: 0 0 30px $maroon
     animation: tilt 2s ease infinite 0s
 
@@ -283,7 +338,7 @@ $mobile-letter-size: 3/4 * $mobile-tile-size
     .button
       display: inline-block
       &:not(:last-child)
-        margin-bottom: 12px
+        margin-bottom: 6px
 
 @keyframes tilt
   0%   { transform: rotate(20deg); }

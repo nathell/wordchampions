@@ -191,6 +191,7 @@
                {:dispatch [:tick]})
              {:db (merge db prs
                          {:mode :in-progress
+                          :current-diagram 0
                           :time 0
                           :hints 0
                           :compat {}})}))))
@@ -220,3 +221,8 @@
   :set-dictionary
   (fn [db [_ dict]]
     (assoc db :dictionary dict)))
+
+(reg-event-db
+  :set-current-diagram
+  (fn [db [_ diagram]]
+    (assoc db :current-diagram diagram)))
