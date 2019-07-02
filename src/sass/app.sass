@@ -199,9 +199,9 @@ $mobile-small-letter-size: 9px
 .diagram-item-border
   font-weight: 700
   font-size: $letter-size
+  text-transform: uppercase
   +mobile
     font-size: $mobile-letter-size
-    text-transform: uppercase
 
 .diagram-small .diagram-item-border
   +mobile
@@ -339,6 +339,9 @@ $mobile-small-letter-size: 9px
       display: inline-block
       &:not(:last-child)
         margin-bottom: 6px
+
+.tile-current
+  transform: scale(1.5,1.5)
 
 @keyframes tilt
   0%   { transform: rotate(20deg); }

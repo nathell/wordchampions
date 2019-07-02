@@ -226,3 +226,20 @@
   :set-current-diagram
   (fn [db [_ diagram]]
     (assoc db :current-diagram diagram)))
+
+(reg-event-db
+  :tap-tile
+  (fn [db [_ tile-source]]
+    (if (:diagram-number tile-source)
+      (move-to-nines db tile-source)
+      (assoc db :current-tile tile-source))))
+
+(reg-event-db
+  :tap-diagram
+  (fn [db [_ target]]
+    (let [source (:current-tile db)]
+      (if (and source (= (:current-diagram db) (:diagram-number target)))
+        (-> db
+            (move-to-diagram source target)
+            (assoc :current-tile nil))
+        db))))

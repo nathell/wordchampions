@@ -9,10 +9,11 @@
     (= (str (subs a 1 4) (subs b 1 4) (subs c 1 4)) fill)))
 
 (defn can-place?
-  [{:keys [compat dragging]} diagram-number]
-  (let [acceptable-source (get compat diagram-number)
-        diagram-source (:diagram-number dragging)
-        nine-source (:nine-number dragging)]
+  [{:keys [compat current-tile dragging]} diagram-number]
+  (let [source (or dragging current-tile)
+        acceptable-source (get compat diagram-number)
+        diagram-source (:diagram-number source)
+        nine-source (:nine-number source)]
     (cond diagram-source (= diagram-source diagram-number)
           nine-source (or (= acceptable-source nine-source)
                           (and (nil? acceptable-source)
@@ -82,3 +83,8 @@
   :loaded?
   (fn [{:keys [dictionaries]} _]
     (and (:nkjp dictionaries) (:osps dictionaries) true)))
+
+(reg-sub
+  :current-tile
+  (fn [db _]
+    (:current-tile db)))

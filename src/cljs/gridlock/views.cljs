@@ -6,19 +6,29 @@
 
 (def <sub (comp deref rf/subscribe))
 
+(defn merge-props
+  ([m] m)
+  ([m1 m2] (r/merge-props m1 m2))
+  ([m1 m2 & ms] (r/merge-props m1 (apply merge-props m2 ms))))
+
 (defn diagram-corner []
   [:div.diagram-corner])
 
 (defn tile [source c movable?]
   (if movable?
     (r/with-let [hide? (r/atom nil)]
-      [:div.tile {:draggable true
-                  :on-drag-start #(do (-> % (aget "dataTransfer") (.setData "text/plain" c))
-                                      (dispatch [:start-drag source])
-                                      (reset! hide? true))
-                  :on-drag-end #(do (dispatch [:end-drag])
-                                    (reset! hide? false))
-                  :class (when @hide? "tile-hidden")}
+      [:div.tile
+       (merge-props
+        {:draggable true
+         :on-drag-start #(do (-> % (aget "dataTransfer") (.setData "text/plain" c))
+                             (dispatch [:start-drag source])
+                             (reset! hide? true))
+         :on-drag-end #(do (dispatch [:end-drag])
+                           (reset! hide? false))
+         :on-touch-start #(dispatch [:tap-tile source])
+         :class (when @hide? "tile-hidden")}
+        (when (= source (<sub [:current-tile]))
+          {:class "tile-current"}))
        c])
     [:div.tile c]))
 
@@ -27,11 +37,6 @@
         (= x 4) [:right  (dec y)]
         (= y 0) [:top    (dec x)]
         (= y 4) [:bottom (dec x)]))
-
-(defn merge-props
-  ([m] m)
-  ([m1 m2] (r/merge-props m1 m2))
-  ([m1 m2 & ms] (r/merge-props m1 (apply merge-props m2 ms))))
 
 (defn diagram
   [{:keys [diagram-number placed finished highlighted] :as desc}]
@@ -65,7 +70,8 @@
              droppable? (assoc :on-drag-enter #(swap! highlighted-fields conj letter-pos)
                                :on-drag-leave #(swap! highlighted-fields disj letter-pos)
                                :on-drag-over #(do (.preventDefault %) (.stopPropagation %))
-                               :on-drop #(do (.preventDefault %) (swap! highlighted-fields empty) (dispatch [:drop-diagram {:diagram-number diagram-number, :letter-pos letter-pos}]))))
+                               :on-drop #(do (.preventDefault %) (swap! highlighted-fields empty) (dispatch [:drop-diagram {:diagram-number diagram-number, :letter-pos letter-pos}]))
+                               :on-touch-start #(dispatch [:tap-diagram {:diagram-number diagram-number, :letter-pos letter-pos}])))
            (cond corner? nil
                  border  (get-in desc [border border-pos])
                  :else   (when (and letter (not placable?))
