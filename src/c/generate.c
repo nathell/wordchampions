@@ -11,7 +11,10 @@ const char pl_letters[] = "ąćęłńóśźż";
 const int NUM_LETTERS = 32;
 const int ASCII_LETTERS = 23;
 
-uint64_t encode(const char *s, size_t sz) {
+uint64_t (*encode)(const char *, size_t);
+const char *(*decode)(uint64_t, size_t);
+
+uint64_t encode_pl(const char *s, size_t sz) {
     uint64_t res = 0;
     while (sz) {
         uint64_t x;
@@ -36,9 +39,19 @@ uint64_t encode(const char *s, size_t sz) {
     return res;
 }
 
+uint64_t encode_en(const char *s, size_t sz) {
+    uint64_t res = 0;
+    while (sz) {
+        uint64_t x = *s++ - 'a';
+        res = NUM_LETTERS * res + x;
+        sz--;
+    }
+    return res;
+}
+
 #define N 20
 
-const char *decode(uint64_t num, size_t sz) {
+const char *decode_pl(uint64_t num, size_t sz) {
     static char res[N];
     res[N - 1] = 0;
     char *s = res + N - 2;
@@ -56,6 +69,18 @@ const char *decode(uint64_t num, size_t sz) {
             *(s - 1) = *u;
             s -= 2;
         }
+        num /= NUM_LETTERS;
+    }
+    return s + 1;
+}
+
+const char *decode_en(uint64_t num, size_t sz) {
+    static char res[N];
+    res[N - 1] = 0;
+    char *s = res + N - 2;
+    while (sz--) {
+        int x = num % NUM_LETTERS;
+        *s-- = x + 'a';
         num /= NUM_LETTERS;
     }
     return s + 1;
@@ -198,13 +223,20 @@ int main(int argc, char **argv) {
     hashset_t h3 = hashset_create();
     hashset_t h9 = hashset_create();
     size_t i = 0, n = 0, j, k, a = 0, filesize, prevlen;
-
-    if (argc == 1) {
-        fprintf(stderr, "Usage: %s <file.txt>\n", argv[0]);
+    if (argc < 3) {
+        fprintf(stderr, "Usage: %s {pl|en} <file.txt>\n", argv[0]);
         return 1;
     }
 
-    words = (char *)slurp(argv[1], &filesize);
+    if (strcmp(argv[1], "en") == 0) {
+        encode = encode_en;
+        decode = decode_en;
+    } else {
+        encode = encode_pl;
+        decode = decode_pl;
+    }
+
+    words = (char *)slurp(argv[2], &filesize);
 
     wordstmp = words;
     prevlen = 0;
