@@ -92,8 +92,10 @@
 
 (reg-sub
   :loaded?
-  (fn [{:keys [dictionaries]} _]
-    (and (:nkjp dictionaries) (:osps dictionaries) true)))
+  (fn [{:keys [dictionaries language]} _]
+    (case language
+      :pl (and (:nkjp dictionaries) (:osps dictionaries) true)
+      :en (and (:en dictionaries) true))))
 
 (reg-sub
   :current-tile

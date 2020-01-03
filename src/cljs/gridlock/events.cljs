@@ -18,12 +18,14 @@
 
 (reg-event-fx
   :fetch-dictionary
-  (fn [_ [_ dict]]
-    {:http-xhrio {:method :get
-                  :uri (str "puzzles/" (name dict) ".txt")
-                  :timeout 10000
-                  :response-format (ajax/text-response-format)
-                  :on-success [:fetch-dictionary-success dict]}}))
+  (fn [{db :db} [_ dict]]
+    (if (get-in db [:dictionaries dict])
+      {}
+      {:http-xhrio {:method :get
+                    :uri (str "puzzles/" (name dict) ".txt")
+                    :timeout 10000
+                    :response-format (ajax/text-response-format)
+                    :on-success [:fetch-dictionary-success dict]}})))
 
 (reg-event-db
   :fetch-dictionary-success
@@ -170,14 +172,21 @@
         (update :hints inc))))
 
 (reg-event-fx
+  :fetch-dictionaries
+  (fn [{db :db} _]
+    {:dispatch-n (case (:language db)
+                   :pl [[:fetch-dictionary :osps]
+                        [:fetch-dictionary :nkjp]]
+                   :en [[:fetch-dictionary :en]])}))
+
+(reg-event-fx
   :init
   (fn [_ _]
     {:db {:language :pl
           :mode :before-start
           :time 0
           :dictionary :nkjp}
-     :dispatch-n [[:fetch-dictionary :osps]
-                  [:fetch-dictionary :nkjp]]}))
+     :dispatch [:fetch-dictionaries]}))
 
 (reg-event-db
   :select-difficulty
@@ -223,10 +232,15 @@
   (fn [db [_ dict]]
     (assoc db :dictionary dict)))
 
-(reg-event-db
+(reg-event-fx
   :set-language
-  (fn [db [_ language]]
-    (assoc db :language language)))
+  (fn [{db :db} [_ language]]
+    {:db (assoc db
+                :language language
+                :dictionary (case language
+                              :en :en
+                              :pl :nkjp))
+     :dispatch [:fetch-dictionaries]}))
 
 (reg-event-db
   :set-current-diagram
