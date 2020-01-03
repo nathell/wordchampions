@@ -17,5 +17,3 @@ To build a production version: `lein with-profile uberjar cljsbuild once`. This 
 ## Play it
 
 http://danieljanus.pl/wladcyslow/
-
-It’s in Polish only, for now.
