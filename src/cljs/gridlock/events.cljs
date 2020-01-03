@@ -182,7 +182,7 @@
 (reg-event-fx
   :init
   (fn [_ _]
-    {:db {:language :pl
+    {:db {:language (if (= js/window.navigator.language "pl") :pl :en)
           :mode :before-start
           :time 0
           :dictionary :nkjp}
