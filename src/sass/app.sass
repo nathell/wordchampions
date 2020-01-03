@@ -134,6 +134,28 @@ h3:not(:last-child), p:not(:last-child)
     font-size: 72px
     line-height: 1.5
 
+.how-to-play
+  align-self: start
+  padding: 0 20px 20px 20px
+  max-width: 600px
+  .nines-area
+    margin-top: 18px
+  svg
+    stroke: $grey
+    display: inline-block
+    width: 20px
+    height: 20px
+    +mobile
+      width: 16px
+      height: 16px
+  button
+    margin: 0
+  p
+    margin: 12px 0
+    line-height: 1.4
+    +desktop
+      font-size: 20px
+
 $tile-size: 40px
 $mobile-tile-size: 24px
 $border-size: 1px

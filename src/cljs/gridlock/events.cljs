@@ -228,6 +228,11 @@
     (assoc db :mode :before-start)))
 
 (reg-event-db
+  :show-how-to-play
+  (fn [db _]
+    (assoc db :mode :how-to-play)))
+
+(reg-event-db
   :set-dictionary
   (fn [db [_ dict]]
     (assoc db :dictionary dict)))

@@ -42,10 +42,10 @@
         (= y 4) [:bottom (dec x)]))
 
 (defn diagram
-  [{:keys [diagram-number placed finished highlighted] :as desc}]
+  [{:keys [diagram-number placed finished highlighted demo] :as desc}]
   [:div.diagram (merge-props (when finished {:class "diagram-finished"})
                              (when highlighted {:class "diagram-highlighted"})
-                             (if (= diagram-number (<sub [:current-diagram]))
+                             (if (or demo (= diagram-number (<sub [:current-diagram])))
                                {:class "diagram-current"}
                                {:class "diagram-small"})
                              {:on-click #(dispatch [:set-current-diagram diagram-number])})
@@ -59,7 +59,7 @@
                   letter (when in-area? (nth placed letter-pos))
                   placable? (= letter ".")
                   droppable? (and placable? (<sub [:can-place? diagram-number]))]]
-        (if (and (= x 4) (= y 0) (not finished))
+        (if (and (= x 4) (= y 0) (not finished) (not demo))
           ^{:key (str x "-" y)}
           [:div.reload
            [:svg {:on-click #(dispatch [:clean-diagram diagram-number])}
@@ -123,6 +123,83 @@
               :class (when (= language current-language) "selected")
               :on-click #(dispatch [:set-language language])}]))))
 
+(defn how-to-play-pl []
+  [:div.how-to-play
+   [:h1 "Cel gry"]
+   [:p "Na ekranie pojawi się " [:i "N"] " kwadratowych diagramów o wymiarach 3×3, z dwunastoma literami na brzegach każdego diagramu, i " [:i "N"] " dziewięcioliterowych słów."]
+   [diagram {:top "apr",
+             :bottom "sya",
+             :left "skp",
+             :right "żza",
+             :placed ".........",
+             :highlighted false,
+             :finished false,
+             :demo true}]
+   [:div.nines-area
+    [nine {:letters "lustracja"}]]
+   [:p "Twoim celem jest dopasowanie diagramów do słów, tak że litery z każdego słowa wypełniają szczelnie jeden z diagramów, tworząc sześć poprawnych wyrazów 5-literowych (trzy w poziomie i trzy w pionie)."]
+   [diagram {:top "apr",
+             :bottom "sya",
+             :left "skp",
+             :right "żza",
+             :placed "tralucasj",
+             :highlighted false,
+             :finished false,
+             :demo true}]
+   [:p "Liczba " [:i "N"] " zależy od poziomu trudności: 1 – łatwy, 3 – średni, 5 – trudny."]
+   [:p [:a {:target "_blank", :rel "noopener", :href "https://www.youtube.com/watch?v=7ec6j31nlAk"} "Zobacz wideo"] " pokazujące zasady gry."]
+   [:h1 "Jak grać"]
+   [:p "W przeglądarce na komputerze: przeciągaj litery ze słów w dolnej części ekranu na diagramy. Kiedy umieścisz literę na diagramie, gra zapamięta to i następne litery na tym diagramie będą mogły pochodzić tylko z tego samego słowa."]
+   [:p "Jeśli popełnisz błąd, możesz przeciągnąć literę z powrotem do dolnej części ekranu; powróci ona na wyjściowe miejsce. Możesz też zresetować diagram dotykając ikony " [:svg [:use {:xlink-href "#rotate-ccw"}]] " w prawym górnym rogu, albo wszystkie diagramy klikając " [:i "Resetuj"] "."]
+   [:p "W przeglądarce mobilnej: jeden z diagramów jest pokazywany w pełnym rozmiarze, a pozostałe jako miniatury. Ten w pełnym rozmiarze jest aktywny. Dotknij diagramu, żeby go aktywować. Aby umieścić literę, dotknij jej, a potem dotknij miejsca docelowego na aktywnym diagramie."]
+   [:p "Gdy poprawnie wypełnisz cały diagram, jest on zaznaczany specjalnym kolorem i wyłączany z dalszej gry."]
+   [:p "Możesz poprosić o podpowiedź klikając " [:i "Podpowiedź"] ". Jeśli wszystkie dotychczas umieszczone litery są na właściwych pozycjach, to gra wybierze losowo jedną z pozostałych liter i przeniesie ją na właściwe miejsce.
+Jeżeli jednak któraś litera jest zagrana niepoprawnie, zostanie ona zdjęta i umieszczona z powrotem w dziewięcioliterowym słowie."]
+   [:button.button.start-button
+    {:on-click #(dispatch [:restart])}
+    "Wróć"]])
+
+(defn how-to-play-en []
+  [:div.how-to-play
+   [:h1 "Objective"]
+   [:p "You are given " [:i "N"] " 3×3 square diagrams, with 12 letters shown on the sides of each diagram, and " [:i "N"] " nine-letter words."]
+   [diagram {:top "spc",
+             :bottom "dak",
+             :left "ile",
+             :right "yry",
+             :placed ".........",
+             :highlighted false,
+             :finished false,
+             :demo true}]
+   [:div.nines-area
+    [nine {:letters "translate"}]]
+   [:p "Your task is to match words against the diagrams so that letters from every nine-letter word fill one of the diagrams to form six valid English words (three horizontal and three vertical)."]
+   [diagram {:top "spc",
+             :bottom "dak",
+             :left "ile",
+             :right "yry",
+             :placed "talasentr",
+             :highlighted false,
+             :finished false,
+             :demo true}]
+   [:p [:i "N"] " depends on the difficulty level: 1 for Easy, 3 for Normal, 5 for Hard."]
+   [:p [:a {:target "_blank", :rel "noopener", :href "https://www.youtube.com/watch?v=7ec6j31nlAk"} "See a video"] " (in Polish) of a TV show featuring the game."]
+   [:h1 "How to play"]
+   [:p "On desktop, drag letters from the words in bottom area onto the diagrams. Once you place a letter on a diagram, the game will remember which word you took that letter from, and only allow subsequent letters from the same word on that diagram."]
+   [:p "If you make a mistake, drop the letter back onto the nine-letter word area; it will return to its original position. You can also reset the whole diagram by clicking the " [:svg [:use {:xlink-href "#rotate-ccw"}]] " icon in the top-right corner, or all diagrams by clicking " [:i "Reset"] "."]
+   [:p "On mobile, you are shown one diagram in full size, and the rest in miniature. The full-size diagram is the current one. To switch between diagrams, tap a miniature. To place a letter, tap it, and then tap the target position on the current diagram."]
+   [:p "When you solve one of the diagrams correctly, it is marked with a colour and removed from further play."]
+   [:p "If you’re stuck, press " [:i "Hint"] ". If all letters you have placed so far are in correct positions, an unused letter will be picked at random and placed on the correct diagram. If you have made an error, one of the wrongly placed letters will be returned to its word."]
+   [:button.button.start-button
+    {:on-click #(dispatch [:restart])}
+    "Back"]])
+
+(defn how-to-play []
+  (case (<sub [:language])
+    :en [how-to-play-en]
+    :pl [how-to-play-pl]
+    nil))
+
 (defn welcome []
   [:div.welcome
    [language-picker]
@@ -131,7 +208,8 @@
     [:button.button.start-button
      {:on-click #(dispatch [:select-difficulty])}
      (msg :start-game)]
-    [:a.button {:target "_blank", :rel "noopener", :href "https://www.youtube.com/watch?v=7ec6j31nlAk"}
+    [:button.button.how-to-play-button
+     {:on-click #(dispatch [:show-how-to-play])}
      (msg :how-to-play)]]])
 
 (defn success []
@@ -179,6 +257,7 @@
      [:div.main-panel
       (condp = (<sub [:mode])
         :before-start [welcome]
+        :how-to-play [how-to-play]
         :difficulty [difficulty]
         :success [success]
         [game])])
