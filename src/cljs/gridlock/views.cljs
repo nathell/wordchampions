@@ -210,7 +210,11 @@ Jeżeli jednak któraś litera jest zagrana niepoprawnie, zostanie ona zdjęta i
      (msg :start-game)]
     [:button.button.how-to-play-button
      {:on-click #(dispatch [:show-how-to-play])}
-     (msg :how-to-play)]]])
+     (msg :how-to-play)]
+    [:a.button
+     {:href (str "mailto:dj@danieljanus.pl?subject="
+                 (string/replace (msg :word-champions) " " "%20"))}
+     (msg :feedback)]]])
 
 (defn success []
   [:div.panel.success
