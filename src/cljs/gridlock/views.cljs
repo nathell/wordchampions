@@ -263,7 +263,7 @@ Jeżeli jednak któraś litera jest zagrana niepoprawnie, zostanie ona zdjęta i
         [game])])
    [:div.author "© "
     [:a {:target "_blank", :rel "noopener", :href "http://danieljanus.pl"} "Daniel Janus"]
-    " 2017–2019"
+    " 2017–2020"
     [:span.is-hidden-mobile
      " | "
      (msg :written-in-cljs)
