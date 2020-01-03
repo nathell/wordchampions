@@ -114,17 +114,19 @@ h3:not(:last-child), p:not(:last-child)
     background-color: lighten($purple, 10)
     cursor: pointer
 
+$language-icon-size: 50px
+
 .language-picker
   img
-    width: 100px
-    height: 100px
+    width: $language-icon-size
+    height: $language-icon-size
     opacity: 0.4
     &:hover
       cursor: pointer
     &:not(:last-child)
       margin-right: 20px
     &.selected
-      border-radius: 50px
+      border-radius: $language-icon-size / 2
       box-shadow: 0 0 10px $purple
       opacity: 1
 
