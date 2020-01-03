@@ -172,7 +172,8 @@
 (reg-event-fx
   :init
   (fn [_ _]
-    {:db {:mode :before-start
+    {:db {:language :pl
+          :mode :before-start
           :time 0
           :dictionary :nkjp}
      :dispatch-n [[:fetch-dictionary :osps]
@@ -221,6 +222,11 @@
   :set-dictionary
   (fn [db [_ dict]]
     (assoc db :dictionary dict)))
+
+(reg-event-db
+  :set-language
+  (fn [db [_ language]]
+    (assoc db :language language)))
 
 (reg-event-db
   :set-current-diagram

@@ -15,7 +15,8 @@
     :normal "Średni"
     :hard "Trudny"
     :loading-dictionaries "Ładuję słowniki"
-    :written-in-cljs "Napisane w języku ClojureScript"}
+    :written-in-cljs "Napisane w języku ClojureScript"
+    :source-code "Kod źródłowy"}
    :en
    {:hint "Hint"
     :reset "Reset"
@@ -30,4 +31,5 @@
     :normal "Normal"
     :hard "Hard"
     :loading-dictionaries "Loading dictionaries"
-    :written-in-cljs "Written in ClojureScript"}})
+    :written-in-cljs "Written in ClojureScript"
+    :source-code "Source code"}})

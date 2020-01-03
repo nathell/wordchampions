@@ -88,3 +88,8 @@
   :current-tile
   (fn [db _]
     (:current-tile db)))
+
+(reg-sub
+  :language
+  (fn [db _]
+    (:language db)))

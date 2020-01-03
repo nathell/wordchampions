@@ -1,10 +1,14 @@
 (ns gridlock.views
   (:require
     [clojure.string :as string]
+    [gridlock.i18n :as i18n]
     [re-frame.core :as rf :refer [dispatch]]
     [reagent.core :as r]))
 
 (def <sub (comp deref rf/subscribe))
+
+(defn msg [id]
+  (get-in i18n/i18n [:pl id]))
 
 (defn merge-props
   ([m] m)
@@ -106,30 +110,39 @@
    [diagrams-area]
    [nines-area]
    [:div.buttons
-    [:button.button {:on-click #(dispatch [:hint])} "Podpowiedź"]
-    [:button.button {:on-click #(dispatch [:reset])} "Resetuj"]
-    [:button.button {:on-click #(dispatch [:restart])} "Nowa gra"]]])
+    [:button.button {:on-click #(dispatch [:hint])} (msg :hint)]
+    [:button.button {:on-click #(dispatch [:reset])} (msg :reset)]
+    [:button.button {:on-click #(dispatch [:restart])} (msg :new-game)]]])
+
+(defn language-picker []
+  (let [current-language (<sub [:language])
+        languages [:pl :en]]
+    (into
+     [:div.language-picker]
+     (for [language languages]
+       [:img {:src (str "img/" (name language) ".svg")
+              :class (when (= language current-language) "selected")
+              :on-click #(dispatch [:set-language language])}]))))
 
 (defn welcome []
   [:div.welcome
-   [:div.title "Witaj!"]
-   #_
-   [:iframe {:width 560, :height 315, :src "https://www.youtube.com/embed/7ec6j31nlAk", :frame-border "0", :allow-full-screen true}]
+   [language-picker]
+   [:div.title (msg :hello)]
    [:div.buttons
     [:button.button.start-button
      {:on-click #(dispatch [:select-difficulty])}
-     "Zacznij grę"]
+     (msg :start-game)]
     [:a.button {:target "_blank", :rel "noopener", :href "https://www.youtube.com/watch?v=7ec6j31nlAk"}
-     "Jak grać?"]]])
+     (msg :how-to-play)]]])
 
 (defn success []
   [:div.panel.success
    [diagrams-area]
-   [:h1 "Brawo!"]
+   [:h1 (msg :hooray)]
    [:div.buttons
     [:button.button
      {:on-click #(dispatch [:restart])}
-     "Jeszcze raz"]]])
+     (msg :play-again)]]])
 
 (defn difficulty []
   [:div.panel.difficulty
@@ -151,17 +164,17 @@
           [:a {:href "http://pfs.org.pl"
                :target "_blank"
                :rel "noopener"} "Polskiej Federacji Scrabble"]]]]]
-   [:h2 "Wybierz poziom trudności:"]
+   [:h2 (msg :select-difficulty)]
    [:div.buttons
-    [:button.button {:on-click #(dispatch [:start 1])} "Łatwy"]
-    [:button.button {:on-click #(dispatch [:start 3])} "Średni"]
-    [:button.button {:on-click #(dispatch [:start 5])} "Trudny"]]])
+    [:button.button {:on-click #(dispatch [:start 1])} (msg :easy)]
+    [:button.button {:on-click #(dispatch [:start 3])} (msg :normal)]
+    [:button.button {:on-click #(dispatch [:start 5])} (msg :hard)]]])
 
 (defn root []
   [:div.root
    [:div.title-bar (<sub [:title-bar])]
    (if-not (<sub [:loaded?])
-     [:div.main-panel "Ładuję słowniki..."]
+     [:div.main-panel (msg :loading-dictionaries) "..."]
      [:div.main-panel
       (condp = (<sub [:mode])
         :before-start [welcome]
@@ -172,5 +185,7 @@
     [:a {:target "_blank", :rel "noopener", :href "http://danieljanus.pl"} "Daniel Janus"]
     " 2017–2019"
     [:span.is-hidden-mobile
-     " | Napisane w języku ClojureScript | "
-     [:a {:target "_blank", :rel "noopener", :href "https://github.com/nathell/gridlock"} "Kod źródłowy"]]]])
+     " | "
+     (msg :written-in-cljs)
+     " | "
+     [:a {:target "_blank", :rel "noopener", :href "https://github.com/nathell/gridlock"} (msg :source-code)]]]])
