@@ -16,7 +16,10 @@
     :hard "Trudny"
     :loading-dictionaries "Ładuję słowniki"
     :written-in-cljs "Napisane w języku ClojureScript"
-    :source-code "Kod źródłowy"}
+    :source-code "Kod źródłowy"
+    :time "Czas"
+    :hints "Podpowiedzi"
+    :word-champions "Władcy słów"}
    :en
    {:hint "Hint"
     :reset "Reset"
@@ -32,4 +35,7 @@
     :hard "Hard"
     :loading-dictionaries "Loading dictionaries"
     :written-in-cljs "Written in ClojureScript"
-    :source-code "Source code"}})
+    :source-code "Source code"
+    :time "Time"
+    :hints "Hints"
+    :word-champions "Word Champions"}})

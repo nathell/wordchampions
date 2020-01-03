@@ -1,12 +1,17 @@
 (ns gridlock.subs
   (:require
     [gridlock.db :as db]
+    [gridlock.i18n :as i18n]
     [re-frame.core :refer [reg-sub]]))
 
 (defn finished?
   [{:keys [horiz vert fill]}]
   (let [[a b c] horiz]
     (= (str (subs a 1 4) (subs b 1 4) (subs c 1 4)) fill)))
+
+(defn- msg
+  [db id]
+  (get-in i18n/i18n [(:language db) id]))
 
 (defn can-place?
   [{:keys [compat current-tile dragging]} diagram-number]
@@ -71,8 +76,14 @@
   :title-bar
   (fn [db _]
     (if (contains? #{:in-progress :success} (:mode db))
-      (str "Czas: " (format-time (:time db)) " Podpowiedzi: " (:hints db))
-      "Władcy słów")))
+      (str (msg db :time)
+           ": "
+           (format-time (:time db))
+           " "
+           (msg db :hints)
+           ": "
+           (:hints db))
+      (msg db :word-champions))))
 
 (reg-sub
   :dictionary-selected?
@@ -93,3 +104,9 @@
   :language
   (fn [db _]
     (:language db)))
+
+(reg-sub
+  :i18n-message
+  :<- [:language]
+  (fn [language [_ id]]
+    (get-in i18n/i18n [language id])))

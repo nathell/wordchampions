@@ -1,14 +1,13 @@
 (ns gridlock.views
   (:require
     [clojure.string :as string]
-    [gridlock.i18n :as i18n]
     [re-frame.core :as rf :refer [dispatch]]
     [reagent.core :as r]))
 
 (def <sub (comp deref rf/subscribe))
 
 (defn msg [id]
-  (get-in i18n/i18n [:pl id]))
+  (<sub [:i18n-message id]))
 
 (defn merge-props
   ([m] m)
