@@ -179,14 +179,18 @@
                         [:fetch-dictionary :nkjp]]
                    :en [[:fetch-dictionary :en]])}))
 
+(def default-dictionary
+  {:pl :nkjp, :en :en})
+
 (reg-event-fx
   :init
   (fn [_ _]
-    {:db {:language (if (= js/window.navigator.language "pl") :pl :en)
-          :mode :before-start
-          :time 0
-          :dictionary :nkjp}
-     :dispatch [:fetch-dictionaries]}))
+    (let [language (if (= js/window.navigator.language "pl") :pl :en)]
+      {:db {:language language
+            :mode :before-start
+            :time 0
+            :dictionary (default-dictionary language)}
+       :dispatch [:fetch-dictionaries]})))
 
 (reg-event-db
   :select-difficulty
@@ -242,9 +246,7 @@
   (fn [{db :db} [_ language]]
     {:db (assoc db
                 :language language
-                :dictionary (case language
-                              :en :en
-                              :pl :nkjp))
+                :dictionary (default-dictionary language))
      :dispatch [:fetch-dictionaries]}))
 
 (reg-event-db
