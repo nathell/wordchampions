@@ -1,18 +1,15 @@
-# gridlock
+# Word Champions
 
 A fun word game!
 
 ## Building and hacking
 
-To launch a dev environment with Emacs and Figwheel:
+First, do `yarn install` to install shadow-cljs. Then just `make`.
 
- 1. Have Leiningen, Emacs, sassc and a recent CIDER installed
- 2. `M-x cider-jack-in-clojurescript`
- 3. The app should pop on http://localhost:3449
+This will start a dev server on http://localhost:8000, serving the contents of `resources/public`.
 
-Outside of Emacs, `lein figwheel` should work.
-
-To build a production version: `lein with-profile uberjar cljsbuild once`. This will produce a deployable version in `target/resources/public/`.
+To build in release mode: `make release`. After that, you can just server
+`resources/public` with a static server.
 
 ## Play it
 
