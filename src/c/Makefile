@@ -1,9 +1,7 @@
-CFLAGS := $(shell pkg-config --cflags glib-2.0)
-
 all: generate
 
 generate: generate.c hashset.c hashset.h
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) $(LDFLAGS) generate.c hashset.c -o $@
 
 clean:
 	rm generate generate.o
