@@ -42,10 +42,13 @@
         (= y 4) [:bottom (dec x)]))
 
 (defn diagram
-  [{:keys [diagram-number placed finished highlighted demo] :as desc}]
+  [{:keys [diagram-number placed finished highlighted demo small] :as desc}]
+  (prn "demo" demo "small" small "cd" (<sub [:current-diagram]) "cond" (or (and demo (not small))
+                                                                           #_(= diagram-number (<sub [:current-diagram]))))
   [:div.diagram (merge-props (when finished {:class "diagram-finished"})
                              (when highlighted {:class "diagram-highlighted"})
-                             (if (or demo (= diagram-number (<sub [:current-diagram])))
+                             (if (or (and demo (not small))
+                                     (and (not demo) (= diagram-number (<sub [:current-diagram]))))
                                {:class "diagram-current"}
                                {:class "diagram-small"})
                              {:on-click #(dispatch [:set-current-diagram diagram-number])})
@@ -113,6 +116,20 @@
     [:button.button {:on-click #(dispatch [:reset])} (msg :reset)]
     [:button.button {:on-click #(dispatch [:restart])} (msg :new-game)]]])
 
+(defn selected-start []
+  [:div.panel.game
+   [:div.diagrams-area
+    (for [i (range (<sub [:requested-difficulty]))]
+      ^{:key i} [diagram {:demo true, :small (pos? i)}])]
+   [:div.nines-area
+    (for [i (range (<sub [:requested-difficulty]))]
+      ^{:key i} [nine {}])]
+   [:div.buttons
+    [:button.button {:on-click #(dispatch [:start])} (msg :start-game)]
+    [:button.button.how-to-play-button
+     {:on-click #(dispatch [:show-how-to-play])}
+     (msg :how-to-play)]]])
+
 (defn language-picker []
   (let [current-language (<sub [:language])
         languages [:pl :en]]
@@ -156,7 +173,7 @@
    [:p "Możesz poprosić o podpowiedź klikając " [:i "Podpowiedź"] ". Jeśli wszystkie dotychczas umieszczone litery są na właściwych pozycjach, to gra wybierze losowo jedną z pozostałych liter i przeniesie ją na właściwe miejsce.
 Jeżeli jednak któraś litera jest zagrana niepoprawnie, zostanie ona zdjęta i umieszczona z powrotem w dziewięcioliterowym słowie."]
    [:button.button.start-button
-    {:on-click #(dispatch [:restart])}
+    {:on-click #(dispatch [:go-back])}
     "Wróć"]])
 
 (defn how-to-play-en []
@@ -191,7 +208,7 @@ Jeżeli jednak któraś litera jest zagrana niepoprawnie, zostanie ona zdjęta i
    [:p "When you solve one of the diagrams correctly, it is marked with a colour and removed from further play."]
    [:p "If you’re stuck, press " [:i "Hint"] ". If all letters you have placed so far are in correct positions, an unused letter will be picked at random and placed on the correct diagram. If you have made an error, one of the wrongly placed letters will be returned to its word."]
    [:button.button.start-button
-    {:on-click #(dispatch [:restart])}
+    {:on-click #(dispatch [:go-back])}
     "Back"]])
 
 (defn how-to-play []
@@ -221,6 +238,9 @@ Jeżeli jednak któraś litera jest zagrana niepoprawnie, zostanie ona zdjęta i
    [diagrams-area]
    [:h1 (msg :hooray)]
    [:div.buttons
+    [:button.button
+     {:on-click #(dispatch [:share])}
+     (msg :share)]
     [:button.button
      {:on-click #(dispatch [:restart])}
      (msg :play-again)]]])
@@ -261,6 +281,7 @@ Jeżeli jednak któraś litera jest zagrana niepoprawnie, zostanie ona zdjęta i
      [:div.main-panel
       (condp = (<sub [:mode])
         :before-start [welcome]
+        :before-start-selected [selected-start]
         :how-to-play [how-to-play]
         :difficulty [difficulty]
         :success [success]
@@ -272,4 +293,7 @@ Jeżeli jednak któraś litera jest zagrana niepoprawnie, zostanie ona zdjęta i
      " | "
      (msg :written-in-cljs)
      " | "
-     [:a {:target "_blank", :rel "noopener", :href "https://github.com/nathell/gridlock"} (msg :source-code)]]]])
+     [:a {:target "_blank", :rel "noopener", :href "https://github.com/nathell/gridlock"} (msg :source-code)]]]
+   [:div.toast
+    {:class (when (<sub [:toast-shown?]) "shown")}
+    (msg (<sub [:toast-message]))]])

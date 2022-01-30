@@ -4,7 +4,7 @@
     [clojure.string :as string]
     [day8.re-frame.http-fx]
     [gridlock.db :as db]
-    [re-frame.core :refer [reg-event-db reg-event-fx]]))
+    [re-frame.core :refer [dispatch reg-event-db reg-event-fx reg-fx]]))
 
 (reg-event-db
   :start-drag
@@ -185,11 +185,13 @@
 (reg-event-fx
   :init
   (fn [_ _]
-    (let [language (if (= js/window.navigator.language "pl") :pl :en)]
-      {:db {:language language
-            :mode :before-start
-            :time 0
-            :dictionary (default-dictionary language)}
+    (let [language (if (= js/window.navigator.language "pl") :pl :en)
+          url (subs js/window.location.hash 1)]
+      {:db (or (db/parse-url url)
+               {:language language
+                :mode :before-start
+                :time 0
+                :dictionary (default-dictionary language)})
        :dispatch [:fetch-dictionaries]})))
 
 (reg-event-db
@@ -197,13 +199,19 @@
   (fn [db _]
     (assoc db :mode :difficulty)))
 
+(reg-fx
+  :set-url-hash
+  (fn [hash]
+    (set! js/window.location.hash hash)))
+
 (reg-event-fx
   :start
   (fn [{db :db} [_ n]]
     (let [prs (db/problems db (:dictionary db) n)]
       (merge (when-not (= (:mode db) :in-progress)
                {:dispatch [:tick]})
-             {:db (merge db prs
+             {:set-url-hash (:url prs)
+              :db (merge db prs
                          {:mode :in-progress
                           :current-diagram 0
                           :time 0
@@ -226,10 +234,34 @@
            :zag (mapv #(assoc % :fill ".........") (:zag db))
            :compat {})))
 
-(reg-event-db
+(reg-event-fx
   :restart
+  (fn [{db :db} _]
+    {:set-url-hash ""
+     :db (assoc db
+                :mode :before-start
+                :problem-numbers nil)}))
+
+(reg-event-db
+  :go-back
   (fn [db _]
-    (assoc db :mode :before-start)))
+    (assoc db :mode
+           (if (seq (:problem-numbers db))
+             :before-start-selected
+             :before-start))))
+
+(reg-fx
+  :copy-to-clipboard
+  (fn [{:keys [text on-success on-error]}]
+    (-> (js/navigator.clipboard.writeText text)
+        (.then on-success on-error))))
+
+(reg-event-fx
+  :share
+  (fn [{db :db} _]
+    {:copy-to-clipboard {:text (db/share-message db js/window.location)
+                         :on-success #(dispatch [:toast/show :copied-to-clipboard])
+                         :on-error #(dispatch [:toast/show :not-copied-to-clipboard])}}))
 
 (reg-event-db
   :show-how-to-play
@@ -270,3 +302,16 @@
             (move-to-diagram source target)
             (assoc :current-tile nil))
         db))))
+
+(reg-event-fx
+  :toast/show
+  (fn [{db :db} [_ message]]
+    {:db (assoc db
+                :toast-shown? true
+                :toast-message message)
+     :dispatch-later {:ms 4000 :dispatch [:toast/hide]}}))
+
+(reg-event-db
+  :toast/hide
+  (fn [db _]
+    (assoc db :toast-shown? false)))
