@@ -8,6 +8,7 @@
 #include "hashset.h"
 
 const char pl_letters[] = "ąćęłńóśźż";
+const char nl_letters[] = "Y"; // wordlist contains capital Y character for Dutch "IJ", as in YsvrY, dozYn, tYdig etc.
 const int NUM_LETTERS = 32;
 const int ASCII_LETTERS = 23;
 
@@ -33,6 +34,24 @@ uint64_t encode_pl(const char *s, size_t sz) {
 
             s += 2;
         }
+        res = NUM_LETTERS * res + x;
+        sz--;
+    }
+    return res;
+}
+
+uint64_t encode_nl(const char *s, size_t sz) {
+    uint64_t res = 0;
+    while (sz) {
+        uint64_t x;
+		if (*s == 'Y') {
+			// exception for 'Y' (='IJ')
+			//x = *s++ - 'a';
+			//x = '{'- 'a'; // one above 'z' character
+			x = *s++ - 63; // 'a'..'z'=0..25, 'Y'=89, encode Y as character 26
+		} else { // if (*s >= 'a' && *s <= 'z') {
+			x = *s++ - 'a';
+		}
         res = NUM_LETTERS * res + x;
         sz--;
     }
@@ -69,6 +88,23 @@ const char *decode_pl(uint64_t num, size_t sz) {
             *(s - 1) = *u;
             s -= 2;
         }
+        num /= NUM_LETTERS;
+    }
+    return s + 1;
+}
+
+const char *decode_nl(uint64_t num, size_t sz) {
+    static char res[N];
+    res[N - 1] = 0;
+    char *s = res + N - 2;
+    while (sz--) {
+        int x = num % NUM_LETTERS;
+		if (x == 26) {
+			x = 89; // 'a'=97 'Y'=89
+		} else {
+			x = x + 'a';
+		}
+        *s-- = x;
         num /= NUM_LETTERS;
     }
     return s + 1;
@@ -223,19 +259,25 @@ int main(int argc, char **argv) {
     hashset_t h3 = hashset_create();
     hashset_t h9 = hashset_create();
     size_t i = 0, n = 0, j, k, a = 0, filesize, prevlen;
+	
+	// check parameters
     if (argc < 3) {
-        fprintf(stderr, "Usage: %s {pl|en} <file.txt>\n", argv[0]);
+        fprintf(stderr, "Usage: %s {pl|nl|en} <file.txt>\n", argv[0]);
         return 1;
     }
 
-    if (strcmp(argv[1], "en") == 0) {
-        encode = encode_en;
-        decode = decode_en;
-    } else {
+    if (strcmp(argv[1], "pl") == 0) {
         encode = encode_pl;
         decode = decode_pl;
+    } else if (strcmp(argv[1], "nl") == 0) {
+        encode = encode_nl;
+        decode = decode_nl;
+    } else { // default to English
+        encode = encode_en;
+        decode = decode_en;
     }
 
+	// read wordlist
     words = (char *)slurp(argv[2], &filesize);
 
     wordstmp = words;
@@ -260,7 +302,16 @@ int main(int argc, char **argv) {
         if (wordstmp)
             wordstmp++;
     }
+	
+	// error reading wordlist
+	if (n == 0) {
+		fprintf(stderr, "%d words found in wordlist %s\n", n, argv[2]);
+	}
 
+	// write csv header columns
+	printf("\nletters3x3,nineletterword,horizontal1,horizontal2,horizontal3,vertical1,vertical2,vertical3\n");
+
+	// generate puzzles
     for (i = 0; i < n; i++) {
         uint64_t wh1 = w3[i];
         for (j = 0; j < n; j++) {

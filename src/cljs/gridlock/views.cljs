@@ -132,7 +132,7 @@
 
 (defn language-picker []
   (let [current-language (<sub [:language])
-        languages [:pl :en]]
+        languages [:pl :nl :en]]
     (into
      [:div.language-picker]
      (for [language languages]
@@ -176,6 +176,41 @@ Jeżeli jednak któraś litera jest zagrana niepoprawnie, zostanie ona zdjęta i
     {:on-click #(dispatch [:go-back])}
     "Wróć"]])
 
+(defn how-to-play-nl []
+  [:div.how-to-play
+   [:h1 "Doel van het spel"]
+   [:p "Het spel begint met raster van " [:i "N"] " 3×3 lege vakjes, met 12 letters rondom aan de zijkant, en " [:i "N"] " negen-letter woorden."]
+   [diagram {:top "ead",
+             :bottom "lsn",
+             :left "aek",
+             :right "rsl",
+             :placed ".........",
+             :highlighted false,
+             :finished false,
+             :demo true}]
+   [:div.nines-area
+    [nine {:letters "geleerden"}]]
+   [:p "Het doel van het spel is om de letters van het negen-letter woord zo in het diagram te plaatsen, op zo'n manier dat er 6 geldige Nederlandse woorden worden gevormd (drie horizontaal en drie verticaal)."]
+   [diagram {:top "ead",
+             :bottom "lsn",
+             :left "aek",
+             :right "rsl",
+             :placed "ndegelere",
+             :highlighted false,
+             :finished false,
+             :demo true}]
+   [:p [:i "N"] " is afhankelijk van de moeilijkheidsgraad: 1 voor makkelijk, 3 voor gemiddeld, 5 voor moeilijk."]
+   [:p [:a {:target "_blank", :rel "noopener", :href "https://www.youtube.com/watch?v=7ec6j31nlAk"} "Bekijk de video"] " (in het Pools) van de TV show waarop dit spel is gebaseerd."]
+   [:h1 "Speluitleg"]
+   [:p "Op de desktop, sleep de letters vanonderaf in het raster. Als je een letter hebt geplaatst in het raster, dan onthoud het spel uit welk negenletterwoord deze afkomstig was, en vanaf dat moment kan je in dat betreffende raster alleen nog letters uit datzelfde woord plaatsen."]
+   [:p "Als je een fout maakt, sleep de letter terug naar het negeletterwoorden gedeelte; de letter gaan dan terug naar zijn originele plek. Je kan ook het diagram resetten door rechtsboven het diagram op het " [:svg [:use {:xlink-href "#rotate-ccw"}]] " icoontje te klikken, of reset alle diagrammen door op de " [:i "Reset"] " knop te klikken."]
+   [:p "Op mobiel krijg je één diagram op volledige grootte te zien, en de overige in miniatuur. Tik op een miniatuur om te wisselen tussen de diagrammen. Om een letter te plaatsen, tik op de letter en tik daarna op een positie in het huidige diagram."]
+   [:p "Als een diagram correct is opgelost dan wordt het gemarkeerd met een kleur en het betreffende diagram is dan uitgesloten van het spel."]
+   [:p "Als je vast zit, klik op " [:i "Hint"] ". Als alle letter tot dusver correct geplaatst zijn, dan wordt een willekeurige ongebruikte letter op de juiste plek in het juiste diagram gezet. Als je een fout hebt gemaakt, dan al één van de verkeerd geplaatste letters terug worden gezet. (vertaling: Bas de Reuver)"]
+   [:button.button.start-button
+    {:on-click #(dispatch [:go-back])}
+    "Back"]])
+	
 (defn how-to-play-en []
   [:div.how-to-play
    [:h1 "Objective"]
@@ -215,6 +250,7 @@ Jeżeli jednak któraś litera jest zagrana niepoprawnie, zostanie ona zdjęta i
   (case (<sub [:language])
     :en [how-to-play-en]
     :pl [how-to-play-pl]
+    :nl [how-to-play-nl]
     nil))
 
 (defn welcome []
