@@ -190,7 +190,7 @@ Jeżeli jednak któraś litera jest zagrana niepoprawnie, zostanie ona zdjęta i
              :demo true}]
    [:div.nines-area
     [nine {:letters "geleerden"}]]
-   [:p "Your task is to match words against the diagrams so that letters from every nine-letter word fill one of the diagrams to form six valid English words (three horizontal and three vertical)."]
+   [:p "Het doel van het spel is om de letters van het negen-letter woord zo in het diagram te plaatsen, op zo'n manier dat er 6 geldige Nederlandse woorden worden gevormd (drie horizontaal en drie verticaal)."]
    [diagram {:top "ead",
              :bottom "lsn",
              :left "aek",
